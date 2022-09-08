@@ -1,8 +1,9 @@
 import "./App.css";
-import CoinList from "./components/CoinList";
+// import CoinList from "./components/CoinList";
+import Upbit from "./components/Upbit";
 
 function App() {
-  return <CoinList></CoinList>;
+  return <Upbit />;
 }
 
 export default App;
