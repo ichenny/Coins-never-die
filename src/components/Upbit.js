@@ -61,6 +61,28 @@ function Upbit() {
         let tradePrice = Number(cell).toLocaleString("ko-KR");
         return tradePrice;
       },
+      /* 아래로 20줄 (64~85)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+    
+
+    */
     },
     {
       dataField: "acc_trade_price_24h",
