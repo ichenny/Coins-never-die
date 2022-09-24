@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import { VscTriangleUp, VscTriangleDown } from "react-icons/vsc";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router";
 
 function Upbit() {
   const [loading, setLoading] = useState(true);
   const [names, setNames] = useState([]);
   const [details, setDetails] = useState([]);
+  const navigate = useNavigate();
 
   // 코인 리스트 가져오기
   const getNames = async () => {
@@ -41,25 +47,129 @@ function Upbit() {
   );
   const coins = Array.from(map.values());
 
+  coins.map((el, index) => (el.id = index + 1));
+
+  // 한 줄(행) 클릭하면 페이지 이동하는 함수
+  const tableRowEvents = {
+    onClick: (e, row, rowIndex) => {
+      // window.location.href = `/coin/${rowIndex}`;
+      // navigate.push({ state: coins });
+      navigate(`/coin/${rowIndex}`, {
+        state: {
+          data: coins,
+        },
+      });
+    },
+  };
+
+  const columns = [
+    { dataField: "id", text: "순위", style: { width: "10%" }, sort: true },
+    { dataField: "english_name", text: "종목", style: { width: "25%" } },
+    {
+      dataField: "trade_price",
+      text: "현재가",
+      style: { width: "15%" },
+      sort: true,
+      formatter: (cell, row, rowIndex, formatExtraData) => {
+        let tradePrice = Number(cell).toLocaleString("ko-KR");
+        return tradePrice;
+      },
+    },
+    {
+      dataField: "acc_trade_price_24h",
+      text: "누적거래대금(24h)",
+      style: { width: "20%" },
+      sort: true,
+      formatter: (cell) => {
+        let accTrade = Math.round(cell / 1000000) * 1000000;
+        accTrade = accTrade.toLocaleString("ko-KR");
+        accTrade = accTrade.slice(0, accTrade.length - 8);
+        return accTrade + " 백만";
+      },
+    },
+    {
+      dataField: "signed_change_rate",
+      text: "변동률",
+      style: { width: "15%" },
+      formatter: (cell) => {
+        let changeRate = (cell * 100).toFixed(2);
+        return changeRate > 0 ? (
+          <span>
+            <VscTriangleUp
+              style={{
+                color: "red",
+              }}
+            />{" "}
+            {changeRate} %
+          </span>
+        ) : changeRate < 0 ? (
+          <span>
+            <VscTriangleDown
+              style={{
+                color: "blue",
+              }}
+            />{" "}
+            {Math.abs(changeRate)} %
+          </span>
+        ) : (
+          changeRate + " %"
+        );
+      },
+    },
+    {
+      dataField: "change",
+      text: "그래프",
+      style: { width: "20%" },
+      // 조건에 따라 그래프 구현할 부분
+      // formatter: (cell) => {
+      //   (cell === "FALL") ? ("하강")
+      // }
+    },
+  ];
+
+  // 처음 렌더링할 때 랭킹을 기준으로 오름차순 정렬
+  const defaultSorted = [
+    {
+      dataField: "id",
+      order: "asc",
+    },
+  ];
+
+  const pagination = paginationFactory({
+    page: 1,
+    sizePerPage: 10,
+    lastPageText: "끝",
+    firstPageText: "처음",
+    nextPageText: ">",
+    prePageText: "<",
+    // showTotal: true,
+    // alwaysShowAllBtns: true,
+    // onPageChange: function (page, sizePerPage) {
+    //   console.log("page", page);
+    //   console.log("sizePerPage", sizePerPage);
+    // },
+    // onSizePerPageChange: function (page, sizePerPage) {
+    //   console.log("page", page);
+    //   console.log("sizePerPage", sizePerPage);
+    // },
+  });
+
   return (
-    <div>
-      <h1>Coin list</h1>
-      <hr />
+    <div className="container">
+      <h1>Coins Never Die</h1>
       {loading ? (
         <strong>Loading...</strong>
       ) : (
-        <ul>
-          {coins.map((coin) => (
-            <li key={coin.market}>
-              <Link to={`/coin/${coin.market}`}>
-                Ranking: {coins.indexOf(coin) + 1} {coin.market}{" "}
-                {coin.korean_name} {coin.english_name} {coin.trade_price}원{" "}
-                {(coin.signed_change_rate * 100).toFixed(2)} % {coin.change}{" "}
-                {coin.acc_trade_price_24h} 원
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <BootstrapTable
+          bootstrap4
+          keyField="id"
+          data={coins}
+          columns={columns}
+          defaultSorted={defaultSorted}
+          pagination={pagination}
+          hover
+          rowEvents={tableRowEvents}
+        />
       )}
     </div>
   );

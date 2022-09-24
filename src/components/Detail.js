@@ -1,7 +1,10 @@
 import { useParams } from "react-router-dom";
+import { useLocation } from "react-router";
 
 function Detail() {
-  //   const { id } = useParams();
+  const { state } = useLocation();
+  // const item = location.state.data;
+  // const { id } = useParams();
 
   //   async function getMovie() {
   //     const response = await fetch(
@@ -13,6 +16,8 @@ function Detail() {
   //   useEffect(() => {
   //     getMovie();
   //   }, []);
+
+  console.log(state);
   return <h1>Detail</h1>;
 }
 export default Detail;
