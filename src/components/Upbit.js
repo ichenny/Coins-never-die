@@ -13,7 +13,8 @@ export default function Upbit({ names, details, coins, loading }) {
     onClick: (e, row, rowIndex) => {
       // window.location.href = `/coin/${rowIndex}`;
       // navigate.push({ state: coins });
-      navigate(`/coin/${rowIndex}`, {
+      console.log(e);
+      navigate(`/coin/${e.target.innerHTML}`, {
         state: {
           data: coins,
         },

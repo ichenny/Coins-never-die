@@ -22,7 +22,7 @@ export function Home() {
   const [hasText, setHasText] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [coins, setCoins] = useState([]);
-  const [allCoins, setAllCoins] = useState([]);
+  let allCoins = [];
   // const [options, setOptions] = useState(coins);
 
   // 코인 리스트 가져오기
@@ -45,25 +45,28 @@ export function Home() {
   };
 
   //API 두개(코인 리스트 + 코인 디테일 정보) 합치기
-  const combine = () => {
-    const map = new Map();
-    names.forEach((item) => map.set(item.market, item));
-    details.forEach((item) =>
-      map.set(item.market, { ...map.get(item.market), ...item })
-    );
-    let temp = Array.from(map.values());
+  const map = new Map();
+  names.forEach((item) => map.set(item.market, item));
+  details.forEach((item) =>
+    map.set(item.market, { ...map.get(item.market), ...item })
+  );
+  let temp = Array.from(map.values());
 
-    temp.map((el, index) => (el.id = index + 1));
-    console.log(temp);
-    setAllCoins(temp);
-    setCoins(temp);
-  };
+  temp.map((el, index) => (el.id = index + 1));
+  allCoins = [...temp];
+  console.log(allCoins);
+  // setCoins(allCoins);
 
   useEffect(() => {
     getNames();
     getDetails();
-    combine();
+    if (allCoins.length !== 0) setCoins(allCoins);
+    else if (allCoins.length === 0) console.log("0");
   }, []);
+
+  // useEffect(() => {
+  //   setCoins(allCoins);
+  // }, [allCoins]);
 
   const HandleInputChange = (event) => {
     const { value } = event.target;
@@ -71,7 +74,6 @@ export function Home() {
     // 값이 들어오면 setHasText로 hasText값을 true로 설정 (렌더링)
     value ? setHasText(true) : setHasText(false);
     // inputValue의 값을 들어온 값으로 설정 (렌더링2)
-    console.log(value);
     setInputValue(value);
 
     // RegExp 정규식 객체 생성
@@ -90,8 +92,8 @@ export function Home() {
       <Logo>Coins Never Die</Logo>
       {console.log("렌더링했다")}
       <Search
-        allCoins={allCoins}
-        setAllCoins={setAllCoins}
+        // allCoins={allCoins}
+        // setAllCoins={setAllCoins}
         coins={coins}
         setCoins={setCoins}
         HandleInputChange={HandleInputChange}

@@ -42,8 +42,8 @@ export const InputContainer = styled.div`
 
 export function Search({
   allCoins,
-  setAllCoins,
-  coins,
+  // setAllCoins,
+  // coins,
   setCoins,
   HandleInputChange,
   inputValue,
